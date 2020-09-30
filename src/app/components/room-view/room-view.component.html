@@ -1,0 +1,10 @@
+<div class="chat-window">
+  <div *ngFor="let message of messageService.chatMessages" class="message-container">
+    <p class="sender">{{message.from}}</p>
+    <p class="message">{{message.message}}</p>
+  </div>
+</div>
+<div class="send-container">
+  <input type="text" pInputText [(ngModel)]="currentMessage">
+  <p-button (onClick)="sendMessage()" label="send"></p-button>
+</div>

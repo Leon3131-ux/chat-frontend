@@ -1,0 +1,7 @@
+<div class="container">
+  <form [formGroup]="loginForm">
+    <input formControlName="username" type="text" pInputText placeholder="username">
+    <input formControlName="password" type="password" pPassword placeholder="password">
+  </form>
+  <p-button label="login" (onClick)="login()"></p-button>
+</div>
