@@ -1,32 +1,39 @@
 import { Injectable } from '@angular/core';
 import {environment} from '../../environments/environment';
 import {Message} from '../models/message';
+import {Stomp} from '@stomp/stompjs';
+import * as SockJS from 'sockjs-client';
+import {AuthenticationService} from './authentication.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessageService {
 
-  constructor() { }
-
-  webSocket: WebSocket;
+  constructor(private authenticationService: AuthenticationService) { }
+  client;
+  connected = false;
   chatMessages: Message[] = [];
 
   public openWebsocketConnection(path: string){
-    this.webSocket = new WebSocket(environment.websocket_url + path);
-
-    this.webSocket.onmessage = (event) => {
-      let message: Message = JSON.parse(event.data);
-      this.chatMessages.push(message);
-    }
+    let url = environment.websocket_url + '?Authorization=Bearer ' + this.authenticationService.getToken().split(' ')[1];
+    let webSocket = new SockJS(url);
+    this.client = Stomp.over(webSocket);
+    this.client.connect({}, () => {
+      this.connected = true;
+      this.client.subscribe('/message/1', (message) => {
+        this.chatMessages.push(JSON.parse(message.body));
+      })
+    })
   }
 
-  public sendMessage(message: string){
-    this.webSocket.send(message);
+  public sendMessage(path: string, message: string){
+    this.client.send(path, {}, message);
   }
 
   public closeWebsocketConnection(){
-    this.webSocket.close();
+    this.client.disconnect();
+    this.connected = false;
     this.chatMessages = [];
   }
 }

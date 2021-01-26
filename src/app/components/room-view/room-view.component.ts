@@ -20,11 +20,11 @@ export class RoomViewComponent implements OnInit {
     this.route.params.subscribe(params =>{
       this.currentRoomId = params['roomId'];
     })
-    this.messageService.openWebsocketConnection('message/' + this.currentRoomId);
+    this.messageService.openWebsocketConnection('/message/' + this.currentRoomId);
   }
 
   sendMessage(){
-    this.messageService.sendMessage(this.currentMessage);
+    this.messageService.sendMessage('/chat-app/send/' + this.currentRoomId, this.currentMessage);
     this.currentMessage = '';
   }
 

@@ -12,7 +12,7 @@ export class AuthHeaderInterceptor implements HttpInterceptor{
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if(this.authenticationService.isLoggedIn()){
       const authHeader = request.clone({
-        setHeaders: {Authorization:   this.authenticationService.getToken()}
+        setHeaders: {Authorization: this.authenticationService.getToken()}
       });
       return next.handle(authHeader);
     }
